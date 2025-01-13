@@ -1,2 +1,2 @@
 # ruby_training
-creating branch for each day
+creating branch for each day.
