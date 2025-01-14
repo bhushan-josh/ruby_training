@@ -5,15 +5,21 @@
 # if grade is between 9-12 return high school
 # if grade is between otherwise return college
 
-puts "Enter the grade"
-grade = gets.to_i
 
-if grade >= 1 and grade <= 5
-    puts "Elementary"
-elsif grade >= 6 and grade <= 8
-    puts "Middle School"
-elsif grade >= 9 and grade <= 12
-    puts "High School"
-else
-    puts "College"
+def school_level grade
+    
+    if grade >= 1 and grade <= 5
+        puts "Elementary"
+    elsif grade >= 6 and grade <= 8
+        puts "Middle School"
+    elsif grade >= 9 and grade <= 12
+        puts "High School"
+    else
+        puts "College"
+    end
 end
+
+puts "Enter the grade"
+input_grade = gets.to_i
+
+school_level input_grade
