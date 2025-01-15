@@ -1,8 +1,8 @@
 def hangman
   hint = ['Animal','Body Part','Fruit','Food', 'Profession']
   word_to_guess = ['DOG','HEAD','APPLE', 'BIRYANI','PILOT']
+  currect_guess = false
   choice = "yes"
-  bflag = false
   chances = 5
   level = 0
 
@@ -10,7 +10,7 @@ def hangman
     current_word = word_to_guess[level]
     display_string = '-' * current_word.length
 
-    while chances > 0 and current_word != display_string
+    while chances > 0 && current_word != display_string
       if choice == "yes" || choice == "y" 
           
         print "\n"
@@ -31,29 +31,31 @@ def hangman
 
         user_input = gets.chomp
         
-        #lower case convert to upcase
+        # Lower case convert to upcase
         if user_input >= 'a' and user_input <= 'z'
           user_input = user_input.upcase
         end
-
+        
         if user_input.length == 1
-          bflag = false
+          currect_guess = false
           for i in 0..current_word.length do 
             if current_word[i] == user_input
               display_string[i] = user_input
-              bflag = true
+              currect_guess = true
             end
-          end  
-        elsif 
+          end
+        elsif user_input.length == 0
+          puts "Empty input, Please enter valid input".center(80)
+        else
           chances -= 1
-          puts "Single letter only, remaing chances : #{chances}".center(80)
+          puts "Single letter only, Remaining chances : #{chances}".center(80)
         end
 
-        if bflag and user_input.length == 1
-          puts ("Right guess continue").center(80)
-        elsif bflag == false and user_input.length == 1
+        if currect_guess and user_input.length == 1
+          puts ("Right guess, Continue").center(80)
+        elsif currect_guess == false and user_input.length == 1
           chances -= 1
-          puts ("Wrong guess user remaing chances : #{chances}").center(80)
+          puts ("Wrong guess, Remaining chances : #{chances}").center(80)
         end
 
         sleep(1)
@@ -63,9 +65,9 @@ def hangman
           print "\n"
           puts "---------------------------------------------------------------------------------"
           print "\n"
-          print ("Congratulation level #{level + 1} has been cleared!!!").center(80)
+          print ("Congratulation, Level #{level + 1} has been cleared!!!").center(80)
           print "\n"
-          print ("Do you want to play next level (yes/no)\n").center(80)
+          print ("Do you want to play next level (yes/no) : \n").center(80)
           choice = gets.chomp.downcase
           print "\n\n"
           puts "---------------------------------------------------------------------------------"
