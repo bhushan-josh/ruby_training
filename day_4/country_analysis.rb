@@ -1,151 +1,113 @@
-countries = [
-  { 
-    name: "india",
-    population: 1400000000,
-    gdp: 3000000,
-    states: 28,
-    army_strength: 1000000,
-    development_status: "developing"
-  },
-  { 
-    name: "china",
-    population: 1450000000,
-    gdp: 3000000,
-    states: 22,
-    army_strength: 2000000,
-    development_status: "developing"
-  },
-  { 
-    name: "japan",
-    population: 125000000,
-    gdp: 1000000,
-    states: 47,
-    army_strength: 250000,
-    development_status: "developed"
-  },
-  { 
-    name: "pakistan",
-    population: 100000000,
-    gdp: 300000,
-    states: 20,
-    army_strength: 5000,
-    development_status: "developing"
-  },
-  { 
-    name: "srilanka",
-    population: 150000000,
-    gdp: 3000000,
-    states: 22,
-    army_strength: 2000000,
-    development_status: "developing"
-  },
-  { 
-    name: "germany",
-    population: 25000000,
-    gdp: 1000000,
-    states: 47,
-    army_strength: 250000,
-    development_status: "developed"
-  }
-]
+# frozen_string_literal: true
 
+require 'yaml'
+
+begin
+  COUNTRIES = YAML.load_file('data.yml')
+rescue Psych::SyntaxError => e
+  puts "YAML syntax error: #{e.message}"
+rescue Errno::ENOENT
+  puts 'File not found: data.yml'
+end
+
+# Module containing methods to check eligibility
 module Eligibility
-  def self.loan_eligibility(country)
-    if country[:gdp] < 1000000
-      return false
-    elsif country[:development_status] == 'developing'
-      return true
-    else
-      return false
-    end
+  def loan_eligibility(country_name)
+    country_gdp = COUNTRIES[country_name]['gdp']
+    country_status = COUNTRIES[country_name]['development_status']
+
+    return false unless country_gdp > 1_000_000 || country_status == 'developed'
+
+    true
   end
 
-  def self.un_seat_eligibility(country)
-    if country[:army_strength] > 100000  
-      return true
-    elsif country[:gdp] > 2000000
-      return true
-    else
-      return false
-    end
+  def un_seat_eligibility(country_name)
+    country_army_strength = COUNTRIES[country_name]['army_strength']
+
+    return false unless country_army_strength > 100_000
+
+    true
   end
 
-  def self.war_outcome(country1, country2)
-    if country1[:army_strength] > country2[:army_strength]
-      return country1[:name]
-    elsif country1[:army_strength] < country2[:army_strength]
-      return country2[:name]
+  def war_outcome(country_name1, country_name2)
+    country1_army_strength = COUNTRIES[country_name1]['army_strength']
+    country2_army_strength = COUNTRIES[country_name2]['army_strength']
+
+    if country1_army_strength > country2_army_strength
+      country_name1
+    elsif country1_army_strength < country2_army_strength
+      country_name2
+    else
+      'tie'
     end
   end
 end
 
-class Country_analysis
-  def initialize(countries)
-    @countries = countries
-  end
+# Class takes user input and calls required methods to check eligibility
+class CountryAnalysis
+  include Eligibility
 
   def start
-    puts "-------------------------------------------------------------------------"
-    puts "what you want to check :  "
-    puts "-------------------------------------------------------------------------"
+    puts '-------------------------------------------------------------------------'
+    puts 'What you want to check :  '
+    puts '-------------------------------------------------------------------------'
     puts "1 : To Check the Loan eligibility \n2 : To Check the UN Seat\n3 : To Check war outcome"
-    puts "-------------------------------------------------------------------------"
-
+    puts '-------------------------------------------------------------------------'
     input = gets.chomp.to_i
-    puts "-------------------------------------------------------------------------"
+    puts '-------------------------------------------------------------------------'
+    options_selection input
+  end
 
+  def options_selection(input)
     case input
-    when 1
-      print "Enter the name of the country: "
-      country_name = gets.chomp.downcase
-      country = @countries.find { |c| c[:name].downcase == country_name }
-
-      puts "-------------------------------------------------------------------------"
-      if Eligibility.loan_eligibility(country)
-        puts "#{country[:name].capitalize} is eligible for an IMF loan."
-      else
-        puts "#{country[:name].capitalize} is not eligible for an IMF loan."
-      end
-      puts "-------------------------------------------------------------------------"
-
-    when 2
-      print "Enter the name of the country: "
-      country_name = gets.chomp.downcase
-      country = @countries.find { |c| c[:name].downcase == country_name }
-
-      puts "-------------------------------------------------------------------------"
-      if Eligibility.un_seat_eligibility(country)
-        puts "#{country[:name].capitalize} is eligible for a seat in the UN Security Council."
-      else
-        puts "#{country[:name].capitalize} is not eligible for a seat in the UN Security Council."
-      end
-      puts "-------------------------------------------------------------------------"
-
-    when 3
-      print "Enter the first countries: "
-      country_name1 = gets.chomp.downcase
-      country1 = @countries.find { |c1| c1[:name].downcase == country_name1 }
-
-      print "Enter the second countries: "
-      country_name2 = gets.chomp.downcase
-      country2 = @countries.find { |c2| c2[:name].downcase == country_name2 }
-
-      puts "-------------------------------------------------------------------------"
-      winner = Eligibility.war_outcome(country1, country2)
-
-      if winner == country1[:name]
-        puts "#{country1[:name].capitalize} will win the war."
-      elsif winner == country2[:name]
-        puts "#{country2[:name].capitalize} will win the war."
-      end
-      puts "-------------------------------------------------------------------------"
-
+    when 1 then check_loan_eligibility
+    when 2 then check_un_seat_eligibility
+    when 3 then check_war_outcome
     else
-      puts "Please enter valid input (Range 1-3)"
+      puts 'Please enter valid input (Range 1-3)'
+      puts '-------------------------------------------------------------------------'
     end
+  end
+
+  def country_input
+    print 'Enter the name of the country: '
+    gets.chomp.downcase
+  end
+
+  def check_loan_eligibility
+    country_name = country_input
+    if loan_eligibility(country_name)
+      puts "#{country_name.capitalize} is eligible for an IMF loan."
+    else
+      puts "#{country_name.capitalize} is not eligible for an IMF loan."
+    end
+    puts '-------------------------------------------------------------------------'
+  end
+
+  def check_un_seat_eligibility
+    country_name = country_input
+    if un_seat_eligibility(country_name)
+      puts "#{country_name.capitalize} is eligible for a seat in the UN Security Council."
+    else
+      puts "#{country_name.capitalize} is not eligible for a seat in the UN Security Council."
+    end
+    puts '-------------------------------------------------------------------------'
+  end
+
+  def check_war_outcome
+    country_name1 = country_input
+    country_name2 = country_input
+    winner = war_outcome(country_name1, country_name2)
+
+    if winner == 'tie'
+      puts 'The war will tie.'
+    else
+      puts "#{winner.capitalize} will win the war."
+    end
+    puts '-------------------------------------------------------------------------'
   end
 end
 
-system("clear")
-app = Country_analysis.new(countries)
+system('clear')
+app = CountryAnalysis.new
 app.start
