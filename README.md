@@ -8,4 +8,11 @@ Day 3 :
 The Hangman game, which was originally written using a procedural approach, has now been rewritten in an object-oriented format.
 
 Day 4 :
+Created Ruby program to analyzes country data from a YAML file,provides three functionalities
+-To check loan eligibility: Checks if a country qualifies for  IMF loan based on GDP or development status.
+-To check UN seat eligibility: Determines if a country is eligible for a UN Security Council seat based on army strength.
+-To check war outcome: Simulates and predicts the winner of a war between two countries based on their army strengths.
+Program uses a command-line interface for user input and provides clear, interactive outputs.
 
+Day 5 :
+Tried out different examples on inheritance topics by our own on ruby console
